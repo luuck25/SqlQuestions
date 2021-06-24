@@ -1,0 +1,22 @@
+input
+
+id	name	dept
+1	a	hr
+2	b	it
+3	c	hr
+4	d	hr
+5	e	it
+
+output 
+
+id	name	dept	count of emp dept wise
+1	a	hr	3
+2	b	it	2
+3	c	hr	3
+4	d	hr	3
+5	e	it	2
+
+
+Query
+
+select id,name,dept, count(dept) over (partition by dept) as countdeptwise from emp
