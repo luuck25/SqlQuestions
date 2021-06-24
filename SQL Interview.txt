@@ -7,7 +7,7 @@ id	name	dept
 4	d	hr
 5	e	it
 
-output 
+output1 
 
 id	name	dept	count of emp dept wise
 1	a	hr	3
