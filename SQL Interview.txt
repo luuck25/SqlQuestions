@@ -126,3 +126,274 @@ Nth salary
 
       select distinct salary as getNthHighestSalary  from (
       select id,salary,dense_rank() over (order by salary desc) as rnk from employee ) j where j.rnk=N
+	  
+-----------------------------------------------------------------------------------------------------
+
+Table: Logs
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| id          | int     |
+| num         | varchar |
++-------------+---------+
+id is the primary key for this table.
+ 
+
+Write an SQL query to find all numbers that appear at least three times consecutively.
+
+Return the result table in any order.
+
+The query result format is in the following example:
+
+ 
+
+Logs table:
++----+-----+
+| Id | Num |
++----+-----+
+| 1  | 1   |
+| 2  | 1   |
+| 3  | 1   |
+| 4  | 2   |
+| 5  | 1   |
+| 6  | 2   |
+| 7  | 2   |
++----+-----+
+
+Result table:
++-----------------+
+| ConsecutiveNums |
++-----------------+
+| 1               |
++-----------------+
+1 is the only number that appears consecutively for at least three times.
+
+
+select distinct a.num  as ConsecutiveNums from logs a join logs b on a.id=b.id+1 and a.num=b.num join logs c on b.id=c.id+1   and b.num=c.num
+
+or
+
+select distinct num as ConsecutiveNums   from (
+select id,num,lead(num,1) over(order by id)  nextnum, lead(num,2) over (order by id)  nextnextnum from logs ) aa where num=nextnum and nextnum=nextnextnum
+
+
+https://leetcode.com/problems/consecutive-numbers/discuss/498428/MySQL-Two-methods
+
+
+-----------------------------------------------------------------------------------
+
+Suppose that a website contains two tables, the Customers table and the Orders table. Write a SQL query to find all customers who never order anything.
+
+Table: Customers.
+
++----+-------+
+| Id | Name  |
++----+-------+
+| 1  | Joe   |
+| 2  | Henry |
+| 3  | Sam   |
+| 4  | Max   |
++----+-------+
+Table: Orders.
+
++----+------------+
+| Id | CustomerId |
++----+------------+
+| 1  | 3          |
+| 2  | 1          |
++----+------------+
+Using the above tables as example, return the following:
+
++-----------+
+| Customers |
++-----------+
+| Henry     |
+| Max       |
++-----------+
+
+
+
+select name as customers from customers left  join orders on customers.id = orders.customerid where customerid is null 
+
+SELECT A.Name from Customers A
+WHERE NOT EXISTS (SELECT 1 FROM Orders B WHERE A.Id = B.CustomerId)
+
+SELECT A.Name from Customers A
+LEFT JOIN Orders B on  a.Id = B.CustomerId
+WHERE b.CustomerId is NULL
+
+SELECT A.Name from Customers A
+WHERE A.Id NOT IN (SELECT B.CustomerId from Orders B)
+
+------------------------------------------------
+able: Trips
+
++-------------+----------+
+| Column Name | Type     |
++-------------+----------+
+| Id          | int      |
+| Client_Id   | int      |
+| Driver_Id   | int      |
+| City_Id     | int      |
+| Status      | enum     |
+| Request_at  | date     |     
++-------------+----------+
+Id is the primary key for this table.
+The table holds all taxi trips. Each trip has a unique Id, while Client_Id and Driver_Id are foreign keys to the Users_Id at the Users table.
+Status is an ENUM type of (‘completed’, ‘cancelled_by_driver’, ‘cancelled_by_client’).
+ 
+
+Table: Users
+
++-------------+----------+
+| Column Name | Type     |
++-------------+----------+
+| Users_Id    | int      |
+| Banned      | enum     |
+| Role        | enum     |
++-------------+----------+
+Users_Id is the primary key for this table.
+The table holds all users. Each user has a unique Users_Id, and Role is an ENUM type of (‘client’, ‘driver’, ‘partner’).
+Status is an ENUM type of (‘Yes’, ‘No’).
+ 
+
+Write a SQL query to find the cancellation rate of requests with unbanned users (both client and driver must not be banned) each day between "2013-10-01" and "2013-10-03".
+
+The cancellation rate is computed by dividing the number of canceled (by client or driver) requests with unbanned users by the total number of requests with unbanned users on that day.
+
+Return the result table in any order. Round Cancellation Rate to two decimal points.
+
+The query result format is in the following example:
+
+ 
+
+Trips table:
++----+-----------+-----------+---------+---------------------+------------+
+| Id | Client_Id | Driver_Id | City_Id | Status              | Request_at |
++----+-----------+-----------+---------+---------------------+------------+
+| 1  | 1         | 10        | 1       | completed           | 2013-10-01 |
+| 2  | 2         | 11        | 1       | cancelled_by_driver | 2013-10-01 |
+| 3  | 3         | 12        | 6       | completed           | 2013-10-01 |
+| 4  | 4         | 13        | 6       | cancelled_by_client | 2013-10-01 |
+| 5  | 1         | 10        | 1       | completed           | 2013-10-02 |
+| 6  | 2         | 11        | 6       | completed           | 2013-10-02 |
+| 7  | 3         | 12        | 6       | completed           | 2013-10-02 |
+| 8  | 2         | 12        | 12      | completed           | 2013-10-03 |
+| 9  | 3         | 10        | 12      | completed           | 2013-10-03 |
+| 10 | 4         | 13        | 12      | cancelled_by_driver | 2013-10-03 |
++----+-----------+-----------+---------+---------------------+------------+
+
+Users table:
++----------+--------+--------+
+| Users_Id | Banned | Role   |
++----------+--------+--------+
+| 1        | No     | client |
+| 2        | Yes    | client |
+| 3        | No     | client |
+| 4        | No     | client |
+| 10       | No     | driver |
+| 11       | No     | driver |
+| 12       | No     | driver |
+| 13       | No     | driver |
++----------+--------+--------+
+
+Result table:
++------------+-------------------+
+| Day        | Cancellation Rate |
++------------+-------------------+
+| 2013-10-01 | 0.33              |
+| 2013-10-02 | 0.00              |
+| 2013-10-03 | 0.50              |
++------------+-------------------+
+
+On 2013-10-01:
+  - There were 4 requests in total, 2 of which were canceled.
+  - However, the request with Id=2 was made by a banned client (User_Id=2), so it is ignored in the calculation.
+  - Hence there are 3 unbanned requests in total, 1 of which was canceled.
+  - The Cancellation Rate is (1 / 3) = 0.33
+On 2013-10-02:
+  - There were 3 requests in total, 0 of which were canceled.
+  - The request with Id=6 was made by a banned client, so it is ignored.
+  - Hence there are 2 unbanned requests in total, 0 of which were canceled.
+  - The Cancellation Rate is (0 / 2) = 0.00
+On 2013-10-03:
+  - There were 3 requests in total, 1 of which was canceled.
+  - The request with Id=8 was made by a banned client, so it is ignored.
+  - Hence there are 2 unbanned request in total, 1 of which were canceled.
+  - The Cancellation Rate is (1 / 2) = 0.50
+  
+  with abc as
+
+(select * from trips where client_id in (select users_id from users where Banned='No') and Driver_id in  (select users_id from users where Banned='No'))
+
+--
+select  dd.request_at as Day ,round(cancel/total,2) as `Cancellation Rate` from 
+
+(select request_at,count(*) total from abc group by request_at ) dd join 
+
+(select request_at,count(*) cancel from abc  where status like '%cancelled%' group by request_at ) dd1
+
+on dd.request_at=dd1.request_at where dd.Request_at >= '2013-10-01' and dd.Request_at <= '2013-10-03'
+
+--
+
+select Request_at Day, round(sum(case when Status != 'completed' then 1 else 0 end)/count(*),2) `Cancellation Rate`
+from Trips t 
+where Client_Id in (select Users_Id from Users where Banned = 'No')
+and Driver_Id in (select Users_Id from Users where Banned = 'No')
+and Request_at >= '2013-10-01' and Request_at <= '2013-10-03'
+group by 1
+
+
+----------------------------
+
+Mary is a teacher in a middle school and she has a table seat storing students' names and their corresponding seat ids.
+
+The column id is continuous increment.
+
+Mary wants to change seats for the adjacent students.
+
+Can you write a SQL query to output the result for Mary?
+
+ 
+
++---------+---------+
+|    id   | student |
++---------+---------+
+|    1    | Abbot   |
+|    2    | Doris   |
+|    3    | Emerson |
+|    4    | Green   |
+|    5    | Jeames  |
++---------+---------+
+For the sample input, the output is:
+
++---------+---------+
+|    id   | student |
++---------+---------+
+|    1    | Doris   |
+|    2    | Abbot   |
+|    3    | Green   |
+|    4    | Emerson |
+|    5    | Jeames  |
++---------+---------+
+
+select 
+    id,
+    case 
+        when id%2=0 then lag(student,1) over(order by id) 
+                    else lead(student,1,student) over(order by id) 
+    end 
+    student 
+from 
+seat
+
+select  
+      case 
+        when id % 2 = 0 then id - 1
+        when id % 2 = 1 and id < (select count(*) from seat)then id + 1
+        else id
+      end as id, 
+    student from seat
+    order by id;
