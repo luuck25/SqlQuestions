@@ -1,0 +1,32 @@
+1.Array can contain primitives (int, char, etc.) as well as object (or non-primitive) references of a class depending on the definition of the array. 
+
+2.In case of primitive data types, the actual values are stored in contiguous memory locations.This makes it easy for the user to find the locations of its elements. 
+
+3. In case of objects of a class, the actual objects are stored in heap segment. (memory location stores only object reference)
+
+4. every element in the array occupies the same amount of space in memory.For example, when we created our int array,
+
+every item that we put into that array will an integer,and in Java, an integer is four bytes,
+so every value in our int array was occupying four bytes in memory.You can't have an array element that occupies four bytes
+and then the second array element occupies 12 bytes and the third array element occupies 300 bytes.That doesn't work.
+
+5. So, because of that, we can easily calculate the memory address of an array element based on its index.
+So, if an array starts at memory address x and the size of each element in the array is y,
+then we can calculate the memory address of the ith element,so array i, by using the following expression,
+x plus i times y.
+
+
+Advantages of Arrays in Java
+---------------------------------
+
+Java arrays enable you to access any element randomly with the help of indexes
+
+It is easy to store and manipulate large data sets 
+
+Disadvantages of Arrays in Java
+------------------------------
+
+The size of the array cannot be increased or decreased once it is declared—arrays have a fixed size
+Java cannot store heterogeneous data. It can only store a single type of primitives
+
+

@@ -1,0 +1,36 @@
+The List interface provides a way to store the ordered collection. It is a child interface of Collection. It is an ordered collection of objects in which duplicate values can be stored. Since List preserves the insertion order, it allows positional access and insertion of elements. 
+
+
+ArrayList
+
+1. ArrayList is basically a resizable array (At backend it has array with default capcity of 10, you can mention  that capcity while creating arraylist). Almost always, you want to use ArrayList over regular arrays since they provide many useful methods.
+
+2. Type in brackets must be an object type and not a primitive type (Therefore we have to use object wrappers, Integer class instead of int, Double instead of double, and so on.)
+
+3. ArrayList maintains the insertion order 
+
+4. ArrayList allows duplicate values in its collection
+
+ArrayList is not thread safe, vector is thread safe (Rest vector is same as arraylist)
+
+// ways to create list
+        List<String> l= new ArrayList<String>(); // default capacity 10
+        //  List<String> l= new ArrayList<String>(20); // custom capacity
+        ArrayList<String> l2= new ArrayList<String>();
+        List<String> l3 = new ArrayList<String>(){{add("a");add("n");}};
+        List<String> l4= new ArrayList<String>(Arrays.asList("a","b"));
+        l.add("a");
+
+        // access list
+        for(int i=0;i<l4.size();i++)
+        {
+            System.out.println(l4.get(i));
+
+        }
+
+        for (String element: l4)
+        {
+            System.out.println(" element is "+element);
+        }
+
+        l4.forEach((x) -> System.out.println(x));
